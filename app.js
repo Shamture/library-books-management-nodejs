@@ -1,8 +1,20 @@
 const express = require('express')
 const app = express()
+const book = require('./Entities/Book.js')
+
+
 
 app.get('/', function (req, res) {
-  res.send('Hello World!')
+
+
+
+res.json(book.addBook('aa','bbb','Scientifique'))
+
+
+//})
+
+
+
 })
 
 app.listen(3000, function () {
