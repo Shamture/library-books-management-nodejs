@@ -3,7 +3,9 @@ const app = express()
 const book = require('./Entities/Book.js')
 
 
-// database connection
+////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////  database ////////////////////////////////////////////////
+
 const Sequelize = require('sequelize');
 const sequelize = new Sequelize('librarybooksmanagement', 'root', '123456', {
     dialect: 'mysql'
@@ -14,10 +16,39 @@ const sequelize = new Sequelize('librarybooksmanagement', 'root', '123456', {
 ///////////////////////////////////  Models  ///////////////////////////////////////////////////////
 
 const Book = sequelize.define('Book', {
+  isbn: { type: Sequelize.STRING, primaryKey: true },
   name: Sequelize.STRING,
-  ISBN: Sequelize.STRING,
-  Category : Sequelize.ENUM('Scientifique', 'Mathematiques','Histoire')
+  category : Sequelize.ENUM('Scientifique', 'Mathematiques','Histoire'),
+  count : Sequelize.INTEGER
 });
+
+
+const Person = sequelize.define('Personn', {
+  name: Sequelize.STRING,
+  type : Sequelize.ENUM('Student', 'Researcher')
+
+});
+
+
+
+const PersonBook = sequelize.define('PersonBook', {
+    status: Sequelize.STRING,
+    startDate : Sequelize.DATE,
+    finishDate : Sequelize.DATE
+})
+
+
+Book.belongsToMany(Person, {through: PersonBook})
+
+
+Book.sync()
+Person.sync()
+PersonBook.sync()
+
+
+
+//////////////////  associations ////////////
+
 
 
 
@@ -34,16 +65,29 @@ app.post('/book', function (req, res) {
     name: name,
     ISBN: isbn,
     Category:category
-  })
+  }).then(function (result) {
+  // Transaction has been committed
+  // result is whatever the result of the promise chain returned to the transaction callback
+}).catch(function (err) {
+  // Transaction has been rolled back
+  // err is whatever rejected the promise chain returned to the transaction callback
+});
   res.send('success');
 });
 
 
 //////////////// find book by category ////////////////
 app.get('/book/category/:category', function (req, res) {
-  Book.findAll({ where: { Category: req.params.category } }).then(books => {
+  Book.findAll({ where: { Category: req.params.category }
+  }).then(books => {
   res.json(books);
-  })
+}).then(function (result) {
+// Transaction has been committed
+// result is whatever the result of the promise chain returned to the transaction callback
+}).catch(function (err) {
+// Transaction has been rolled back
+// err is whatever rejected the promise chain returned to the transaction callback
+});
 });
 
 
