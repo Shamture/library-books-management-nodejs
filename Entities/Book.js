@@ -6,7 +6,6 @@ const sequelize = new Sequelize('librarybooksmanagement', 'root', '123456', {
 
 
 
-
 const Book = sequelize.define('Book', {
   name: Sequelize.STRING,
   ISBN: Sequelize.STRING,
@@ -23,8 +22,13 @@ return  sequelize.sync()
       ISBN: isbn,
       Category:category
     }))
-    .then(book => {
-      return book
-    });
+
+};
+
+
+module.exports.getBooks = function () {
+  Book.findAll().then(books => {
+  console.log(books);
+})
 
 };
