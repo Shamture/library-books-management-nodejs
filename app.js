@@ -72,6 +72,7 @@ app.post('/book', function (req, res) {
   // Transaction has been rolled back
   // err is whatever rejected the promise chain returned to the transaction callback
 });
+ res.header("Access-Control-Allow-Origin", "*");
   res.send('success');
 });
 
@@ -80,6 +81,7 @@ app.post('/book', function (req, res) {
 app.get('/book/category/:category', function (req, res) {
   Book.findAll({ where: { Category: req.params.category }
   }).then(books => {
+ res.header("Access-Control-Allow-Origin", "*");
   res.json(books);
 }).then(function (result) {
 // Transaction has been committed
@@ -95,6 +97,7 @@ app.get('/book/category/:category', function (req, res) {
   //////////////// find book by ISBN ////////////////
   app.get('/book/ISBN/:isbn', function (req, res) {
     Book.findAll({ where: { ISBN: req.params.isbn } }).then(books => {
+ res.header("Access-Control-Allow-Origin", "*");
     res.json(books);
     })
 
