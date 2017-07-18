@@ -190,7 +190,69 @@ app.get('/person/id/:id', function (req, res) {
 
 
 
+//////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////  Person Book API  /////////////////////////////////////////////////////
 
+
+
+
+/// borrow book
+app.post('/borrow', function (req, res) {
+
+  res.header("Access-Control-Allow-Origin", "*");
+
+  console.log(req.body);
+
+
+///  find the book to borrow
+  Book.find({ where: { ISBN: req.body.isbn }
+
+  }).then(book => {
+
+// check if the book is available or not
+if(book.dataValues.count > 0)
+{
+console.log("the book to borrow is "+book.dataValues.name);
+
+// find the person that will borrow the book
+ Person.find({ where: { id: req.body.id }
+ }).then(person => {
+
+console.log(book.dataValues.name+" to mr "+person.dataValues.name);
+
+book.setPersonns(person, { through: { status: 'borrowed' , startDate : sequelize.fn('NOW') , finishDate : req.body.finishDate}});
+
+// decrement the books count
+sequelize.query('UPDATE Books SET count = count-1 WHERE isbn = $1 ',{ bind: [book.dataValues.isbn], type: sequelize.QueryTypes.UPDATE })
+
+
+ })
+}
+
+
+
+}).then(function (result) {
+
+  const sucess = { "sucess":true};
+  res.json(sucess);
+
+
+}).catch(function (err) {
+console.log(err);
+const sucess = { "sucess":false};
+res.json(sucess);
+
+});
+
+});
+
+
+/*
+book.getPersonns().then(function (projects) {
+  console.log(projects[0].dataValues.name);
+})
+
+*/
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////
