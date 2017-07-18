@@ -78,7 +78,6 @@ app.post('/book', function (req, res) {
   const sucess = { "sucess":true};
   res.json(sucess);
 
-  console.log("saved !");
 
 }).catch(function (err) {
 console.log(err);
@@ -114,9 +113,80 @@ app.get('/book/category/:category', function (req, res) {
  res.header("Access-Control-Allow-Origin", "*");
     res.json(books);
     })
+});
 
+    //////////////// find book by name ////////////////
+    app.get('/book/name/:name', function (req, res) {
+      Book.findAll({ where: { name:req.params.name  } }).then(books => {
+    res.header("Access-Control-Allow-Origin", "*");
+      res.json(books);
+      })
 
 });
+
+
+//////////////// find book by LIKE name ////////////////
+app.get('/book/namelike/:name', function (req, res) {
+  Book.findAll({ where: { name:{$like: '%'+req.params.name}  } }).then(books => {
+res.header("Access-Control-Allow-Origin", "*");
+  res.json(books);
+  })
+
+});
+
+
+
+
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////  Person API  /////////////////////////////////////////////////////
+
+
+/// add new person
+app.post('/person', function (req, res) {
+
+  console.log(req.body);
+  Person.create({
+    name: req.body.name,
+    type: req.body.type
+
+  }).then(function (result) {
+
+  const sucess = { "sucess":true};
+  res.json(sucess);
+
+
+}).catch(function (err) {
+console.log(err);
+const sucess = { "sucess":false};
+res.json(sucess);
+
+});
+ res.header("Access-Control-Allow-Origin", "*");
+
+});
+
+
+
+
+
+//////////////// find person by id ////////////////
+app.get('/person/id/:id', function (req, res) {
+  Person.findAll({ where: { id: req.params.id }
+  }).then(persons => {
+ res.header("Access-Control-Allow-Origin", "*");
+ res.json(persons);
+}).then(function (result) {
+// Transaction has been committed
+// result is whatever the result of the promise chain returned to the transaction callback
+}).catch(function (err) {
+// Transaction has been rolled back
+// err is whatever rejected the promise chain returned to the transaction callback
+});
+});
+
 
 
 
