@@ -2,6 +2,13 @@ const express = require('express')
 const app = express()
 const book = require('./Entities/Book.js')
 
+var bodyParser = require('body-parser');
+
+app.use(bodyParser.urlencoded({
+    extended: true
+}));
+app.use(bodyParser.json());
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////  database ////////////////////////////////////////////////
@@ -57,23 +64,30 @@ PersonBook.sync()
 ////////////////////////////  Book API  /////////////////////////////////////////////////////
 
 
-
+/// add new book
 app.post('/book', function (req, res) {
 
   console.log(req.body);
   Book.create({
-    name: name,
-    ISBN: isbn,
-    Category:category
+    name: req.body.name,
+    isbn: req.body.isbn,
+    category:req.body.category,
+    count:req.body.count
   }).then(function (result) {
-  // Transaction has been committed
-  // result is whatever the result of the promise chain returned to the transaction callback
+
+  const sucess = { "sucess":true};
+  res.json(sucess);
+
+  console.log("saved !");
+
 }).catch(function (err) {
-  // Transaction has been rolled back
-  // err is whatever rejected the promise chain returned to the transaction callback
+console.log(err);
+const sucess = { "sucess":false};
+res.json(sucess);
+
 });
  res.header("Access-Control-Allow-Origin", "*");
-  res.send('success');
+
 });
 
 
@@ -82,7 +96,7 @@ app.get('/book/category/:category', function (req, res) {
   Book.findAll({ where: { Category: req.params.category }
   }).then(books => {
  res.header("Access-Control-Allow-Origin", "*");
-  res.json(books);
+ res.json(books);
 }).then(function (result) {
 // Transaction has been committed
 // result is whatever the result of the promise chain returned to the transaction callback
