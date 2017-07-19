@@ -2,6 +2,8 @@ const express = require('express')
 const app = express()
 const book = require('./Entities/Book.js')
 
+var hash = require('hash.js')
+
 var bodyParser = require('body-parser');
 
 app.use(bodyParser.urlencoded({
@@ -32,6 +34,8 @@ const Book = sequelize.define('Book', {
 
 const Person = sequelize.define('Personn', {
   name: Sequelize.STRING,
+  username:Sequelize.STRING,
+  password:Sequelize.STRING,
   type : Sequelize.ENUM('Student', 'Researcher')
 
 });
@@ -56,6 +60,40 @@ PersonBook.sync()
 
 //////////////////  associations ////////////
 
+
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////  Login API  /////////////////////////////////////////////////////
+
+
+//////////////// login ////////////////
+app.post('/login', function (req, res) {
+
+  Person.find({ where: { username: req.body.username ,password:hash.sha512().update(req.body.password).digest('hex')}
+  }).then(person => {
+ res.header("Access-Control-Allow-Origin", "*");
+
+result={"login":false}
+
+if(person==null)
+ res.json(result);
+else {
+  result={"login":true}
+  res.json(result);
+}
+
+
+
+}).then(function (result) {
+// Transaction has been committed
+// result is whatever the result of the promise chain returned to the transaction callback
+}).catch(function (err) {
+// Transaction has been rolled back
+// err is whatever rejected the promise chain returned to the transaction callback
+});
+});
 
 
 
