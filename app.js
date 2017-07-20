@@ -298,7 +298,7 @@ book.getPersonns().then(function (projects) {
 
 /// Follow-up books
 app.get('/follow-up', function (req, res) {
-      PersonBook.findAll().then(followup => {
+      Book.findAll({  include: [{ model: Person ,required: true}]   }).then(followup => {
     res.header("Access-Control-Allow-Origin", "*");
       res.json(followup);
       });
