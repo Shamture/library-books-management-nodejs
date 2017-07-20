@@ -80,7 +80,8 @@ result={"login":false}
 if(person==null)
  res.json(result);
 else {
-  result={"login":true}
+  result={"login":true,"user":person.dataValues.username}
+
   res.json(result);
 }
 
@@ -113,13 +114,13 @@ app.post('/book', function (req, res) {
     count:req.body.count
   }).then(function (result) {
 
-  const sucess = { "sucess":true};
+  const sucess = { "success":true};
   res.json(sucess);
 
 
 }).catch(function (err) {
 console.log(err);
-const sucess = { "sucess":false};
+const sucess = { "success":false};
 res.json(sucess);
 
 });
@@ -192,13 +193,13 @@ app.post('/person', function (req, res) {
 
   }).then(function (result) {
 
-  const sucess = { "sucess":true};
+  const sucess = { "success":true};
   res.json(sucess);
 
 
 }).catch(function (err) {
 console.log(err);
-const sucess = { "sucess":false};
+const sucess = { "success":false};
 res.json(sucess);
 
 });
@@ -229,7 +230,7 @@ app.get('/person/id/:id', function (req, res) {
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////  Person Book API  /////////////////////////////////////////////////////
+////////////////////////////  Borrow API  /////////////////////////////////////////////////////
 
 
 
@@ -271,13 +272,13 @@ sequelize.query('UPDATE Books SET count = count-1 WHERE isbn = $1 ',{ bind: [boo
 
 }).then(function (result) {
 
-  const sucess = { "sucess":true};
+  const sucess = { "success":true};
   res.json(sucess);
 
 
 }).catch(function (err) {
 console.log(err);
-const sucess = { "sucess":false};
+const sucess = { "success":false};
 res.json(sucess);
 
 });
@@ -292,6 +293,17 @@ book.getPersonns().then(function (projects) {
 
 */
 
+
+
+
+/// Follow-up books
+app.get('/follow-up', function (req, res) {
+      PersonBook.findAll().then(followup => {
+    res.header("Access-Control-Allow-Origin", "*");
+      res.json(followup);
+      });
+
+});
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////  Launch server ////////////////////////////////////////////////
