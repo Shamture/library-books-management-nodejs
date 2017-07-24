@@ -166,7 +166,7 @@ app.get('/book/category/:category', function (req, res) {
 
 //////////////// find book by LIKE name ////////////////
 app.get('/book/namelike/:name', function (req, res) {
-  Book.findAll({ where: { name:{$like: '%'+req.params.name}  } }).then(books => {
+  Book.findAll({ where: { name:{$like: '%'+req.params.name+'%'}  } }).then(books => {
 res.header("Access-Control-Allow-Origin", "*");
   res.json(books);
   })
