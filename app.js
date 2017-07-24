@@ -270,12 +270,12 @@ if(book.dataValues.count > 0)
 console.log("the book to borrow is "+book.dataValues.name);
 
 // find the person that will borrow the book
- Person.find({ where: { id: req.body.id }
+ Person.find({ where: { username: req.body.username }
  }).then(person => {
 
 console.log(book.dataValues.name+" to mr "+person.dataValues.name);
 
-book.setPersonns(person, { through: { status: 'borrowed' , startDate : sequelize.fn('NOW') , finishDate : req.body.finishDate}});
+book.addPersonn(person, { through: { status: 'borrowed' , startDate : sequelize.fn('NOW') , finishDate : req.body.finishDate}});
 
 // decrement the books count
 sequelize.query('UPDATE Books SET count = count-1 WHERE isbn = $1 ',{ bind: [book.dataValues.isbn], type: sequelize.QueryTypes.UPDATE })
