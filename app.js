@@ -228,6 +228,22 @@ app.get('/person/id/:id', function (req, res) {
 
 
 
+//////////////// find person by name ////////////////
+app.get('/person/namelike/:name', function (req, res) {
+
+  Person.findAll({  where: { name:{$like: '%'+req.params.name+'%'}  }}).then(persons => {
+ res.header("Access-Control-Allow-Origin", "*");
+ res.json(persons);
+}).then(function (result) {
+// Transaction has been committed
+// result is whatever the result of the promise chain returned to the transaction callback
+}).catch(function (err) {
+// Transaction has been rolled back
+// err is whatever rejected the promise chain returned to the transaction callback
+});
+});
+
+
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////  Borrow API  /////////////////////////////////////////////////////
