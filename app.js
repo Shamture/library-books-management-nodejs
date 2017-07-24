@@ -211,9 +211,9 @@ res.json(sucess);
 
 
 
-//////////////// find person by id ////////////////
-app.get('/person/id/:id', function (req, res) {
-  Person.findAll({ where: { id: req.params.id }
+//////////////// find person by username ////////////////
+app.get('/person/username/:username', function (req, res) {
+  Person.findAll({ where: { username: req.params.username }
   }).then(persons => {
  res.header("Access-Control-Allow-Origin", "*");
  res.json(persons);
