@@ -11,6 +11,11 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(bodyParser.json());
 
+//var expressJwt = require('express-jwt');
+var jwt = require('jsonwebtoken');
+const fs = require('fs');
+
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////  database ////////////////////////////////////////////////
@@ -60,7 +65,18 @@ PersonBook.sync()
 
 //////////////////  associations ////////////
 
-
+// get the decoded payload ignoring signature, no secretOrPrivateKey needed 
+var token = 'eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwibmFtZSI6IlBlcnNvbiAyIiwidXNlcm5hbWUiOiJwZXJzb24yIiwicGFzc3dvcmQiOiI5ZWNhNTRjMTU2ZmZiNzVkMjJiZTQ3YTA5YzA2ZDU2MDA5ZjM4MzFmY2Y1OGI2MDBmNTBkZjExODEyOWFkZGNkZmI2MjFmNWJjZDUxZTdkYWNiNmI0Nzg3YzkxYzIyNGM5NmIwNDUxOWQ4ZDQ1MDJkYmE4ZDhiNmU1N2QyMmVmMiIsInR5cGUiOiJTdHVkZW50IiwiY3JlYXRlZEF0IjoiMjAxNy0wNy0xOVQwMDowMDowMC4wMDBaIiwidXBkYXRlZEF0IjoiMjAxNy0wNy0xOVQwMDowMDowMC4wMDBaIiwiaWF0IjoxNTAxMDc1NzE3fQ.i5DrxYrmBC6K8u0T4azMPKW2a2pEwjAGCEsaPERvSLzEwLjXs7Z2WykuT-1Vl9pUGTu97Xp0pasJ4EyQLW-sod_FCXcKqPP075MbJv5JVaHRBy9c0LZ4bSV4zXoYXAEKv5448ymRUMlrG8GoDmKzKisGa4IfrSEeTr76OvIpiqiPyTj9BgfCodFFNOCnkfAKqBkcKen58Cp17eXwio92nPDxxHsOBsUtV-BsV6piImyDk-3WGWg69oLPDFvkhXVM664ecXimPCdiflufopNmuxvHzYBTpSf3_B-p4XZFPdGvvjU_iNCA5FiqP6WADazC3xibxTecFfEQfPgxoRnWaw';
+ 
+// alg mismatch 
+var cert = fs.readFileSync('key.pub');  // get public key 
+jwt.verify(token, cert, function(err, decoded) {
+  console.log(decoded) // bar 
+});
+ 
+ 
+ 
+ 
 
 
 
@@ -71,6 +87,7 @@ PersonBook.sync()
 //////////////// login ////////////////
 app.post('/login', function (req, res) {
 
+console.log(req)
   Person.find({ where: { username: req.body.username ,password:hash.sha512().update(req.body.password).digest('hex')}
   }).then(person => {
  res.header("Access-Control-Allow-Origin", "*");
@@ -80,9 +97,16 @@ result={"login":false}
 if(person==null)
  res.json(result);
 else {
-  result={"login":true,"user":person.dataValues.username}
-
-  res.json(result);
+ // result={"login":true,"user":person.dataValues.username}
+ // We are sending the profile inside the token
+var cert = fs.readFileSync('key.pem');  // get private key  
+var token = jwt.sign(person.dataValues,cert, { algorithm: 'RS512'});
+ 
+ 
+ 
+console.log(token)
+  res.json({ token: token });
+  //res.json(result);
 }
 
 
