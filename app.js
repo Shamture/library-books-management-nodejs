@@ -97,6 +97,7 @@ result={"login":false}
 if(person==null)
  res.json(result);
 else {
+
  // result={"login":true,"user":person.dataValues.username}
  // We are sending the profile inside the token
 var cert = fs.readFileSync('key.pem');  // get private key  
