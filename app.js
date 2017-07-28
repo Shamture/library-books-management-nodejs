@@ -87,7 +87,7 @@ jwt.verify(token, cert, function(err, decoded) {
 //////////////// login ////////////////
 app.post('/login', function (req, res) {
 
-console.log(req)
+ 
   Person.find({ where: { username: req.body.username ,password:hash.sha512().update(req.body.password).digest('hex')}
   }).then(person => {
  res.header("Access-Control-Allow-Origin", "*");
@@ -97,7 +97,7 @@ result={"login":false}
 if(person==null)
  res.json(result);
 else {
-
+ 
  // result={"login":true,"user":person.dataValues.username}
  // We are sending the profile inside the token
 var cert = fs.readFileSync('key.pem');  // get private key  
@@ -107,7 +107,7 @@ var token = jwt.sign(person.dataValues,cert, { algorithm: 'RS512'});
  
 console.log(token)
   res.json({ token: token });
-  //res.json(result);
+ 
 }
 
 
@@ -214,6 +214,8 @@ app.post('/person', function (req, res) {
   console.log(req.body);
   Person.create({
     name: req.body.name,
+    username: req.body.username,
+    password: hash.sha512().update(req.body.password).digest('hex'),
     type: req.body.type
 
   }).then(function (result) {
