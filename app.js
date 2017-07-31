@@ -44,6 +44,7 @@ const Person = sequelize.define('Personn', {
   name: Sequelize.STRING,
   username:Sequelize.STRING,
   password:Sequelize.STRING,
+  email:Sequelize.STRING,
   type : Sequelize.ENUM('Student', 'Researcher')
 
 });
@@ -375,13 +376,21 @@ let transporter = nodemailer.createTransport({
     }
 });
 
+console.log(req.body.file);
 // setup email data with unicode symbols
 let mailOptions = {
-    from: '"Library books management" <*>', // sender address
-    to: '*', // list of receivers
-    subject: '*', // Subject line
-    text: '*', // plain text body
-    html: '<b>*</b>' // html body
+    from: '"Library books management" <'+config.email.user+'>', // sender address
+    to: req.body.receiver, // list of receivers
+    subject: req.body.subject, // Subject line
+    text: req.body.emailContent, // plain text body
+    html: '<b>*</b>', // html body
+ attachments: [
+        {
+        filename:'file.pdf',    
+	content: req.body.file,
+        encoding: 'binary'
+        }]
+
 };
 
  
@@ -391,11 +400,15 @@ transporter.sendMail(mailOptions, (error, info) => {
  
     if (error) {
         return console.log(error);
+ const sucess = { "success":false};
+  res.json(sucess);
     }
 
     console.log('Message %s sent: %s', info.messageId, info.response);
 
  res.header("Access-Control-Allow-Origin", "*");
+ const sucess = { "success":true};
+  res.json(sucess);
 
 });
 
