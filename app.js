@@ -16,6 +16,9 @@ var jwt = require('jsonwebtoken');
 const fs = require('fs');
 
 
+const nodemailer = require('nodemailer');
+
+var config = require('./config.js');
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////  database ////////////////////////////////////////////////
@@ -347,6 +350,58 @@ app.get('/follow-up', function (req, res) {
       });
 
 });
+
+
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////  Email API  /////////////////////////////////////////////////////
+
+
+/// send email 
+app.post('/email', function (req, res) {
+
+ 
+
+ // create reusable transporter object using the default SMTP transport
+let transporter = nodemailer.createTransport({
+    host: config.email.host,
+    port: config.email.port,
+    secure: false, // secure:true for port 465, secure:false for port 587
+    auth: {
+        user: config.email.user,
+        pass: config.email.pass
+    }
+});
+
+// setup email data with unicode symbols
+let mailOptions = {
+    from: '"Library books management" <*>', // sender address
+    to: '*', // list of receivers
+    subject: '*', // Subject line
+    text: '*', // plain text body
+    html: '<b>*</b>' // html body
+};
+
+ 
+
+// send mail with defined transport object
+transporter.sendMail(mailOptions, (error, info) => {
+ 
+    if (error) {
+        return console.log(error);
+    }
+
+    console.log('Message %s sent: %s', info.messageId, info.response);
+
+ res.header("Access-Control-Allow-Origin", "*");
+
+});
+
+});
+
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////  Launch server ////////////////////////////////////////////////
