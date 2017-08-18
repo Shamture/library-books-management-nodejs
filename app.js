@@ -32,9 +32,18 @@ const sequelize = new Sequelize('librarybooksmanagement', 'root', '123456', {
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////  Models  ///////////////////////////////////////////////////////
 
+
 const Book = sequelize.define('Book', {
   isbn: { type: Sequelize.STRING, primaryKey: true },
   name: Sequelize.STRING,
+  printer: Sequelize.STRING,
+  publicationPlace: Sequelize.STRING,
+  pagesNumber : Sequelize.INTEGER,
+  dimension: Sequelize.STRING,
+  theme: Sequelize.STRING,
+  languages: Sequelize.STRING,
+  description: Sequelize.STRING,
+  placeInTheLibrary: Sequelize.STRING,
   category : Sequelize.ENUM('Scientifique', 'Mathematiques','Histoire'),
   count : Sequelize.INTEGER
 });
@@ -138,6 +147,14 @@ app.post('/book', function (req, res) {
   console.log(req.body);
   Book.create({
     name: req.body.name,
+    printer: req.body.printer,
+    publicationPlace: req.body.publicationPlace,
+    pagesNumber: req.body.pagesNumber,
+    dimension: req.body.dimension,
+    theme: req.body.theme,
+    languages: req.body.languages,
+    description: req.body.description,
+    placeInTheLibrary: req.body.placeInTheLibrary,
     isbn: req.body.isbn,
     category:req.body.category,
     count:req.body.count
