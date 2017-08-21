@@ -221,8 +221,8 @@ res.header("Access-Control-Allow-Origin", "*");
 
 
 //////////////// find book by keywords ////////////////
-    app.get('/book/keywords/:keywords', function (req, res) {
-      Book.findAll({ where: { keywords:{$like: '%'+req.params.keywords+'%'} } }).then(books => {
+    app.get('/book/keywords/:keywords/:page', function (req, res) {
+      Book.findAndCountAll({ where: { keywords:{$like: '%'+req.params.keywords+'%'} } , limit: 20, offset: (req.params.page-1)*20}).then(books => {
     res.header("Access-Control-Allow-Origin", "*");
       res.json(books);
       })
