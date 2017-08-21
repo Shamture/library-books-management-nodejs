@@ -40,7 +40,7 @@ const Book = sequelize.define('Book', {
   publicationPlace: Sequelize.STRING,
   pagesNumber : Sequelize.INTEGER,
   dimension: Sequelize.STRING,
-  theme: Sequelize.STRING,
+  keywords: Sequelize.STRING,
   languages: Sequelize.STRING,
   description: Sequelize.STRING,
   placeInTheLibrary: Sequelize.STRING,
@@ -151,7 +151,7 @@ app.post('/book', function (req, res) {
     publicationPlace: req.body.publicationPlace,
     pagesNumber: req.body.pagesNumber,
     dimension: req.body.dimension,
-    theme: req.body.theme,
+    keywords: req.body.keywords,
     languages: req.body.languages,
     description: req.body.description,
     placeInTheLibrary: req.body.placeInTheLibrary,
@@ -220,7 +220,14 @@ res.header("Access-Control-Allow-Origin", "*");
 });
 
 
+//////////////// find book by keywords ////////////////
+    app.get('/book/keywords/:keywords', function (req, res) {
+      Book.findAll({ where: { keywords:{$like: '%'+req.params.keywords+'%'} } }).then(books => {
+    res.header("Access-Control-Allow-Origin", "*");
+      res.json(books);
+      })
 
+});
 
 
 
