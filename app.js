@@ -54,6 +54,8 @@ const Person = sequelize.define('Personn', {
   username:Sequelize.STRING,
   password:Sequelize.STRING,
   email:Sequelize.STRING,
+  isActivated:{ type: Sequelize.BOOLEAN, defaultValue: false},
+  validationKey:Sequelize.STRING,
   type : Sequelize.ENUM('Student', 'Researcher')
 
 });
@@ -101,7 +103,7 @@ jwt.verify(token, cert, function(err, decoded) {
 app.post('/login', function (req, res) {
 
  
-  Person.find({ where: { username: req.body.username ,password:hash.sha512().update(req.body.password).digest('hex')}
+  Person.find({ where: { username: req.body.username ,password:hash.sha512().update(req.body.password).digest('hex'),isActivated: true}
   }).then(person => {
  res.header("Access-Control-Allow-Origin", "*");
 
@@ -133,6 +135,37 @@ console.log(token)
 // err is whatever rejected the promise chain returned to the transaction callback
 });
 });
+
+
+
+
+
+////////// activate user account 
+
+app.get('/login/validation/:key', function (req, res) {
+  
+
+
+res.header("Access-Control-Allow-Origin", "*");
+result={"success":false}
+
+Person.find({ where: { validationKey: req.params.key } })
+  .then(person => {
+    // Check if record exists in db
+    if (person!=null) {
+      person.updateAttributes({isActivated: true})
+      result={"success":true}
+    }
+
+	 res.json(result);
+  })
+
+
+
+
+
+
+})
 
 
 
@@ -234,6 +267,7 @@ res.header("Access-Control-Allow-Origin", "*");
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////  Person API  /////////////////////////////////////////////////////
+
 
 
 /// add new person
