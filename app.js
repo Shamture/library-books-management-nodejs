@@ -103,7 +103,7 @@ jwt.verify(token, cert, function(err, decoded) {
 app.post('/login', function (req, res) {
 
  
-  Person.find({ where: { username: req.body.username ,password:hash.sha512().update(req.body.password).digest('hex'),isActivated: true}
+  Person.find({ where: { username: req.body.username ,password:hash.sha512().update(req.body.password).digest('hex')}
   }).then(person => {
  res.header("Access-Control-Allow-Origin", "*");
 
@@ -111,6 +111,11 @@ result={"login":false}
 
 if(person==null)
  res.json(result);
+else if (!person.isActivated)
+{
+result={"login":false,"activated":false}
+ res.json(result);
+}
 else {
  
  // result={"login":true,"user":person.dataValues.username}
@@ -121,7 +126,7 @@ var token = jwt.sign(person.dataValues,cert, { algorithm: 'RS512'});
  
  
 console.log(token)
-  res.json({ token: token });
+  res.json({ login:true,token: token });
  
 }
 
