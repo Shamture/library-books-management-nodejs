@@ -283,6 +283,7 @@ app.post('/person', function (req, res) {
     name: req.body.name,
     username: req.body.username,
     password: hash.sha512().update(req.body.password).digest('hex'),
+    validationKey:Math.random() * (99999999999999999999 - 11111111111111111111) + 11111111111111111111+hash.sha512().update(req.body.username).digest('hex'),
     email: req.body.email,
     type: req.body.type
 
