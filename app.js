@@ -279,15 +279,57 @@ res.header("Access-Control-Allow-Origin", "*");
 app.post('/person', function (req, res) {
 
   console.log(req.body);
+//generate validation key
+
+let validationK = Math.random() * (99999999999999999999 - 11111111111111111111) + 11111111111111111111+hash.sha512().update(req.body.username).digest('hex');
+
   Person.create({
     name: req.body.name,
     username: req.body.username,
     password: hash.sha512().update(req.body.password).digest('hex'),
-    validationKey:Math.random() * (99999999999999999999 - 11111111111111111111) + 11111111111111111111+hash.sha512().update(req.body.username).digest('hex'),
+    validationKey:validationK,
     email: req.body.email,
     type: req.body.type
 
   }).then(function (result) {
+
+/// send confirmation email to user
+
+let transporter = nodemailer.createTransport({
+    host: config.email.host,
+    port: config.email.port,
+    secure: false, 
+    auth: {
+        user: config.email.user,
+        pass: config.email.pass
+    }
+});
+
+
+let mailOptions = {
+    from: '"Library books management" <'+config.email.user+'>', // sender address
+    to: req.body.email, // list of receivers
+    subject: 'account confirmation', // Subject line
+
+    html: 'please click the following link to confirm your account : <br/> http://localhost:4200/validateRegistration/'+validationK,
+};
+
+ 
+
+// send mail with defined transport object
+transporter.sendMail(mailOptions, (error, info) => {
+ 
+    if (error) {
+        return console.log(error);
+ const sucess = { "success":false};
+  res.json(sucess);
+    }
+
+    console.log('Message %s sent: %s', info.messageId, info.response);
+
+
+});
+
 
   const sucess = { "success":true};
   res.json(sucess);
