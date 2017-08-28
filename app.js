@@ -55,6 +55,7 @@ const Person = sequelize.define('Personn', {
   password:Sequelize.STRING,
   email:Sequelize.STRING,
   isActivated:{ type: Sequelize.BOOLEAN, defaultValue: false},
+  strikes:Sequelize.INTEGER,
   validationKey:Sequelize.STRING,
   type : Sequelize.ENUM('Student', 'Researcher')
 
@@ -438,6 +439,61 @@ res.json(sucess);
 });
 
 });
+
+
+////// return  book
+
+
+/// borrow book
+app.post('/returnbook', function (req, res) {
+
+  res.header("Access-Control-Allow-Origin", "*");
+
+  console.log(req.body);
+
+
+///  find the book to return
+  PersonBook.find({ where: { BookIsbn: req.body.isbn, PersonnId: req.body.id}
+
+  }).then(personbook => {
+
+personbook.updateAttributes({status: 'returned'})
+
+
+
+// increment the books count
+sequelize.query('UPDATE Books SET count = count+1 WHERE isbn = $1 ',{ bind: [personbook.BookIsbn], type: sequelize.QueryTypes.UPDATE })
+
+
+
+if(personbook.finishDate<Date.now()){
+	//strike
+Person.find({ where: { id: req.body.id }
+ }).then(person => {
+
+person.updateAttributes({strikes: person.strikes+1})
+ })
+	
+}
+
+
+
+
+}).then(function (result) {
+
+  const sucess = { "success":true};
+  res.json(sucess);
+
+
+}).catch(function (err) {
+console.log(err);
+const sucess = { "success":false};
+res.json(sucess);
+
+});
+
+});
+
 
 
 /*
